@@ -4,9 +4,14 @@
   :license {:name "EPL-2.0 OR GPL-2.0-or-later WITH Classpath-exception-2.0"
             :url "https://www.eclipse.org/legal/epl-2.0/"}
   :dependencies [[org.clojure/clojure "1.10.0"]
-                 [ring/ring-core "1.9.6"] ;; essential functions
-                 [ring/ring-jetty-adapter "1.9.6"] ;; Jetty server and adapter
-                 [compojure "1.7.0"] ;; routing library
+                 ;; essential functions
+                 [ring/ring-core "1.9.6"]
+                 ;; Jetty server and adapter
+                 [ring/ring-jetty-adapter "1.9.6"]
+                 ;; Standard Ring middleware functions for handling JSON requests and responses.
+                 [ring/ring-json "0.5.1"]
+                 ;; routing library
+                 [compojure "1.7.0"]
                  ;; postgresql db connecting
                  [org.postgresql/postgresql "42.4.0"]
                  [com.github.seancorfield/next.jdbc "1.2.780"]

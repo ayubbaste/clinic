@@ -28,7 +28,7 @@
                   (jdbc/execute! connection ["SELECT * FROM contacts;"])))
 
   (defn labeled-radio [label]
-    [:label (radio-button {:ng-model "user.gender"} "user.gender" false label)
+    [:label (radio-button {:ng-model "gender"} "gender" false label)
      (str label "    ")])
 
   (let [content (html5 [:head
@@ -36,25 +36,18 @@
         (include-css "css/main.css")
         [:meta {:charset "UTF-8"}]]
       [:body
-        [:h1 "Patients"]
-        [:p "(SQL response objects)"]
+        [:h3 "Patients"]
         [:table
-          [:th "Id"]
-          [:th "Name"]
-          [:th "Last name"]
-          [:th "Email"]
           (for [patient patients]
             [:tr
               [:td (get patient :contacts/id)]
-              [:td [:a {:href (:to-uri "/" (get patient :contacts/id))} (get patient :contacts/first_name)]]
-              [:td (get patient :contacts/last_name)]
-              [:td (get patient :contacts/email)]
+              [:td [:a {:href (:to-uri "/" (get patient :contacts/id))} (get patient :contacts/first_name) (get patient :contacts/last_name)]]
             ])]
 
         [:br]
         [:br]
 
-        [:h2 "Add new patient"]
+        [:h4 "Add new patient"]
 
         (form-to [:post "/"]
           [:p {:class "ddfsdfds"}
@@ -84,23 +77,68 @@
              :body {:error "Not found"}})))
 
 
+(defn add-new-patient
+  [request]
+
+  (def first-name (get-in request [:form-params "name"]))
+  (def last-name (get-in request [:form-params "last-name"]))
+  (def email (get-in request [:form-params "email"]))
+  (def gender (get-in request [:form-params "gender"]))
+  (def notes (get-in request [:form-params "notes"]))
+  (with-open [connection (jdbc/get-connection ds)]
+    (jdbc/execute! connection ["INSERT INTO contacts (first_name, last_name, email) VALUES (?, ?, ?) RETURNING id;" first-name, last-name, email]))
+
+    ;;{:status 201
+     ;;:body (get-contact-by-id created-id)}))
+
+  (let [content (html5 [:head
+          [:title "New patient added successfuly"]
+          (include-css "css/main.css")
+          [:meta {:charset "UTF-8"}]]
+         [:body
+          [:p [:i "Breadcrumbs: " [:a {:href "/"} "Home"]]]
+          [:h3 "New patient added successfuly"]
+          [:p "Name: "      first-name]
+          [:p "Last name: " last-name]
+          [:p "Email: "     email]
+          [:p "Gender: "    gender]
+          [:p "Notes: "     notes]
+          [:br]
+          [:br]
+          ;;[:p full-req]
+        ])]
+
+          (if content
+            {:status 201
+             :headers {"Content-Type" "text/html; charset=UTF-8"}
+             ;;:body (slurp (get-in request [:params "name"]))}
+             :body content}
+            {:status 404
+             :headers {"Content-Type" "text/html; charset=UTF-8"}
+             :body {:error "Not found"}})))
+
+
 (defn patient-page
   [request]
 
+  (def id (Integer. (get-in request [:params :id])))
+
   (def patient (with-open [connection (jdbc/get-connection ds)]
-                 (jdbc/execute! connection ["SELECT * FROM contacts WHERE id=?;" (Integer. (get-in request [:params :id]))])))
+                 (jdbc/execute! connection ["SELECT * FROM contacts WHERE id=?;" id])))
 
   (let [content (html5 [:head
           [:title "My title"]
           (include-css "css/main.css")
           [:meta {:charset "UTF-8"}]]
          [:body
-          [:p [:a {:href "/"} "Home"]]
-          [:h1 "Patient id "  (:contacts/id (first patient))]
-          [:p "Name: "        (:contacts/first_name (first patient))]
-          [:p "Last name: "   (:contacts/last_name (first patient))]
-          [:p "Email: "       (:contacts/email (first patient))]
-        ])]
+          [:p [:i "Breadcrumbs: " [:a {:href "/"} "Home"]]]
+          [:h3 (:contacts/first_name (first patient))
+               (:contacts/last_name (first patient))]
+          [:p [:em "Patient id"] ": " (:contacts/id (first patient))]
+          [:p [:em "Name"] ": "       (:contacts/first_name (first patient))]
+          [:p [:em"Last name"] ": "   (:contacts/last_name (first patient))]
+          [:p [:em "Email"] ": "      (:contacts/email (first patient))]
+         ])]
 
           (if content
             {:status 200
@@ -109,3 +147,37 @@
             {:status 404
              :headers {"Content-Type" "text/html; charset=UTF-8"}
              :body {:error "Not found"}})))
+
+
+(defn delete-patient
+  [request]
+
+  (def id (Integer. (get-in request [:params :id])))
+
+  (let [content (html5 [:head
+          [:title "My title"]
+          (include-css "css/main.css")
+          [:meta {:charset "UTF-8"}]]
+         [:body
+          [:p [:i "Breadcrumbs: " [:a {:href "/"} "Home"]]]
+          [:h3 "Patient's card id: deleted"]
+         ])]
+
+    (if content
+      {:status 200
+       :body {:deleted true
+              :body content}}
+      {:status 404
+       :body {:deleted false
+              :error "Unable to delete contact"}})))
+
+;;  (let [deleted-count (with-open [connection (jdbc/get-connection ds)]
+;;                        (jdbc/execute! connection ["DELETE FROM contacts WHERE id=?;" id]))]
+
+;;    (if (= 1 deleted-count)
+;;      {:status 200
+;;       :body {:deleted true
+;;              :body content}}
+;;      {:status 404
+;;       :body {:deleted false
+;;              :error "Unable to delete contact"}})))
