@@ -1,4 +1,5 @@
 (ns clinic.core
+  (:gen-class)
   (:require [ring.adapter.jetty   :as jetty]
             [ring.middleware.params :refer [wrap-params]]
             [ring.middleware.keyword-params :refer [wrap-keyword-params]]
@@ -16,10 +17,10 @@
 
 
 (defroutes app
-  (GET    "/" request index-page)
-  (POST   "/" request add-new-patient)
-  (GET    "/:id" request patient-page)
-  (DELETE "/:id" request delete-patient)
+  (GET    "/"     request index-page)
+  (POST   "/"     request add-new-patient)
+  (GET    "/:id"  request patient-page)
+  (DELETE "/:id"  request delete-patient)
   (ANY    "/echo" req {:status 200
                        :headers {"Content-Type" "text/plain"}}
                        :body (with-out-str (pprint/pprint req)))
@@ -37,9 +38,12 @@
                      {:port 3001           ;; listen on port 3001
                       :join? false})))     ;; don't block the main thread
 
-
 ;; call the .stop method on the object stored in the atom
 (defn stop-server []
   (when-some [s @server]  ;; check if there is an object in the atom
     (.stop s)             ;; call the .stop method
     (reset! server nil))) ;; overwrite the atom with nil
+
+(defn -main [& args]
+  (println "Server started")
+  (reset! server (start-server)))

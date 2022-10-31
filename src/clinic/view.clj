@@ -7,6 +7,7 @@
                                  email-field
                                  text-area
                                  radio-button
+                                 hidden-field
                                  submit-button]]
 
   ))
@@ -32,9 +33,10 @@
      (str label "    ")])
 
   (let [content (html5 [:head
+        [:meta {:charset "UTF-8"}]
         [:title "My title"]
-        (include-css "css/main.css")
-        [:meta {:charset "UTF-8"}]]
+        (include-css "/static/css/main.css")
+        ]
       [:body
         [:h3 "Patients"]
         [:table
@@ -93,7 +95,7 @@
 
   (let [content (html5 [:head
           [:title "New patient added successfuly"]
-          (include-css "css/main.css")
+          (include-css "/static/css/main.css")
           [:meta {:charset "UTF-8"}]]
          [:body
           [:p [:i "Breadcrumbs: " [:a {:href "/"} "Home"]]]
@@ -128,7 +130,7 @@
 
   (let [content (html5 [:head
           [:title "My title"]
-          (include-css "css/main.css")
+          (include-css "/static/css/main.css")
           [:meta {:charset "UTF-8"}]]
          [:body
           [:p [:i "Breadcrumbs: " [:a {:href "/"} "Home"]]]
@@ -138,6 +140,10 @@
           [:p [:em "Name"] ": "       (:contacts/first_name (first patient))]
           [:p [:em"Last name"] ": "   (:contacts/last_name (first patient))]
           [:p [:em "Email"] ": "      (:contacts/email (first patient))]
+          [:br]
+          (form-to [:delete "/" (:contacts/id (first patient))]
+           ;;(hidden-field (:contacts/id (first patient)))
+           (submit-button "Delete patient"))
          ])]
 
           (if content
@@ -152,25 +158,36 @@
 (defn delete-patient
   [request]
 
-  (def id (Integer. (get-in request [:params :id])))
+  (println request))
 
-  (let [content (html5 [:head
-          [:title "My title"]
-          (include-css "css/main.css")
-          [:meta {:charset "UTF-8"}]]
-         [:body
-          [:p [:i "Breadcrumbs: " [:a {:href "/"} "Home"]]]
-          [:h3 "Patient's card id: deleted"]
-         ])]
+;;  (def id (get-in request [:form-params :id]))
+;;
+;;  (with-open [connection (jdbc/get-connection ds)]
+;;    (jdbc/execute! connection ["DELETE FROM contacts WHERE id=?;" id]))
+;;
+;;   {:status 200
+;;    :body {;;:deleted true
+;;           :body "OOOOOOOOOOOOOOOKKKKKK !"}})
+;;           ;;:body (slurp (get-in request [:params "id"]))}})
 
-    (if content
-      {:status 200
-       :body {:deleted true
-              :body content}}
-      {:status 404
-       :body {:deleted false
-              :error "Unable to delete contact"}})))
 
+;;  (let [content (html5 [:head
+;;          [:title "My title"]
+;;          (include-css "/static/css/main.css")
+;;          [:meta {:charset "UTF-8"}]]
+;;         [:body
+;;          [:p [:i "Breadcrumbs: " [:a {:href "/"} "Home"]]]
+;;          [:h3 "Patient's card id: deleted"]
+;;         ])]
+;;
+;;    (if content
+;;      {:status 200
+;;       :body {:deleted true
+;;              :body content}}
+;;      {:status 404
+;;       :body {:deleted false
+;;              :error "Unable to delete contact"}})))
+;;
 ;;  (let [deleted-count (with-open [connection (jdbc/get-connection ds)]
 ;;                        (jdbc/execute! connection ["DELETE FROM contacts WHERE id=?;" id]))]
 
