@@ -24,6 +24,7 @@
   (ANY    "/echo" req {:status 200
                        :headers {"Content-Type" "text/plain"}}
                        :body (with-out-str (pprint/pprint req)))
+  (route/resources "/")
   (route/not-found {:status 404
                     :headers {"Content-Type" "text/plain"
                     :body "My Error 404 - Page not found"}})

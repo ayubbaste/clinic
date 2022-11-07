@@ -35,40 +35,46 @@
   (let [content (html5 [:head
         [:meta {:charset "UTF-8"}]
         [:title "My title"]
-        (include-css "/static/css/main.css")
+        (include-css "/css/bootstrap.min.css")
+        (include-css "/css/main.css")
         ]
       [:body
-        [:h3 "Patients"]
-        [:table
-          (for [patient patients]
-            [:tr
-              [:td (get patient :contacts/id)]
-              [:td [:a {:href (:to-uri "/" (get patient :contacts/id))} (get patient :contacts/first_name) (get patient :contacts/last_name)]]
-            ])]
+        [:div {:class "content"}
+          [:div {:class "container"}
+            [:h3 "Patients"]
+            [:table
+              (for [patient patients]
+                [:tr
+                  [:td (get patient :contacts/id)]
+                  [:td [:a {:href (:to-uri "/" (get patient :contacts/id))} (get patient :contacts/first_name) (get patient :contacts/last_name)]]
+                ])]
 
-        [:br]
-        [:br]
+            [:br]
+            [:br]
 
-        [:h4 "Add new patient"]
+            [:h4 "Add new patient"]
 
-        (form-to [:post "/"]
-          [:p {:class "ddfsdfds"}
-           (text-field {:class "dfsdfs" :ng-model "Name" :placeholder "Name"} "name")]
+            (form-to [:post "/"]
+              [:p {:class "ddfsdfds"}
+               (text-field {:class "dfsdfs" :ng-model "Name" :placeholder "Name"} "name")]
 
-          [:p {:class "ddfsdfds"}
-           (text-field {:class "dfsdfs" :ng-model "LastName" :placeholder "Last name"} "last-name")]
+              [:p {:class "ddfsdfds"}
+               (text-field {:class "dfsdfs" :ng-model "LastName" :placeholder "Last name"} "last-name")]
 
-          [:p {:class "ddfsdfds"}
-           (email-field {:class "dfsdfs" :ng-model "Email" :placeholder "Email"} "email")]
+              [:p {:class "ddfsdfds"}
+               (email-field {:class "dfsdfs" :ng-model "Email" :placeholder "Email"} "email")]
 
-          [:div {:class "form-group"}
-           (reduce conj [:div {:class "btn-group"}] (map labeled-radio ["male" "female"]))]
+              [:div {:class "form-group"}
+               (reduce conj [:div {:class "btn-group"}] (map labeled-radio ["male" "female"]))]
 
-          [:p {:class "ddfsdfds"}
-           (text-area {:class "dfsdfs" :cols 50 :rows 2 :ng-model "Text-Area" :placeholder "Notes"} "notes")]
-           [:br]
-           (submit-button "Add new patient"))
-        ])]
+              [:p {:class "ddfsdfds"}
+               (text-area {:class "dfsdfs" :cols 50 :rows 2 :ng-model "Text-Area" :placeholder "Notes"} "notes")]
+              [:br]
+              (submit-button "Add new patient"))
+            ]
+          ]
+        ]
+       )]
 
           (if content
             {:status 200
@@ -95,20 +101,25 @@
 
   (let [content (html5 [:head
           [:title "New patient added successfuly"]
-          (include-css "/static/css/main.css")
+          (include-css "/css/bootstrap.min.css")
+          (include-css "/css/main.css")
           [:meta {:charset "UTF-8"}]]
          [:body
-          [:p [:i "Breadcrumbs: " [:a {:href "/"} "Home"]]]
-          [:h3 "New patient added successfuly"]
-          [:p "Name: "      first-name]
-          [:p "Last name: " last-name]
-          [:p "Email: "     email]
-          [:p "Gender: "    gender]
-          [:p "Notes: "     notes]
-          [:br]
-          [:br]
-          ;;[:p full-req]
-        ])]
+           [:div {:class "content"}
+             [:div {:class "container"}
+               [:p [:i "Breadcrumbs: " [:a {:href "/"} "Home"]]]
+               [:h3 "New patient added successfuly"]
+               [:p "Name: "      first-name]
+               [:p "Last name: " last-name]
+               [:p "Email: "     email]
+               [:p "Gender: "    gender]
+               [:p "Notes: "     notes]
+               [:br]
+               [:br]
+             ]
+           ]
+         ]
+        )]
 
           (if content
             {:status 201
@@ -130,21 +141,27 @@
 
   (let [content (html5 [:head
           [:title "My title"]
-          (include-css "/static/css/main.css")
+          (include-css "/css/bootstrap.min.css")
+          (include-css "/css/main.css")
           [:meta {:charset "UTF-8"}]]
          [:body
-          [:p [:i "Breadcrumbs: " [:a {:href "/"} "Home"]]]
-          [:h3 (:contacts/first_name (first patient))
-               (:contacts/last_name (first patient))]
-          [:p [:em "Patient id"] ": " (:contacts/id (first patient))]
-          [:p [:em "Name"] ": "       (:contacts/first_name (first patient))]
-          [:p [:em"Last name"] ": "   (:contacts/last_name (first patient))]
-          [:p [:em "Email"] ": "      (:contacts/email (first patient))]
-          [:br]
-          (form-to [:delete "/" (:contacts/id (first patient))]
-           ;;(hidden-field (:contacts/id (first patient)))
-           (submit-button "Delete patient"))
-         ])]
+           [:div {:class "content"}
+             [:div {:class "container"}
+               [:p [:i "Breadcrumbs: " [:a {:href "/"} "Home"]]]
+               [:h3 (:contacts/first_name (first patient))
+                    (:contacts/last_name (first patient))]
+               [:p [:em "Patient id"] ": " (:contacts/id (first patient))]
+               [:p [:em "Name"] ": "       (:contacts/first_name (first patient))]
+               [:p [:em"Last name"] ": "   (:contacts/last_name (first patient))]
+               [:p [:em "Email"] ": "      (:contacts/email (first patient))]
+               [:br]
+               (form-to [:delete "/" (:contacts/id (first patient))]
+                ;;(hidden-field (:contacts/id (first patient)))
+                (submit-button "Delete patient"))
+             ]
+           ]
+         ]
+        )]
 
           (if content
             {:status 200
